@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, inicial-scale=1.0">
+    <title>Lista da Futura Casa</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1> Lista da Futura Casa</h1>
+
+        <button id="btnTema">🌙 Modo Escuro</button>
+
+                 <div class="progresso">
+
+        <h3>🏠 Progresso da Casa</h3>
+
+        <div class="barra">
+           <div id="barraProgresso"></div>
+        </div>
+
+        <p id="textoProgresso">0 de 0 itens comprados</p>
+
+    </div>  
+
+        <div class="dashboard"> 
+
+        <div class="card">
+           <h3>📦 Itens</h3>
+           <p id="totalItens">0</p>
+        </div>
+
+        <div class="card">
+            <h3>✅ Comprados</h3>
+         <p id="comprados">0</p>
+        </div>
+
+            <div class="card">
+            <h3>🛒 Faltam</h3>
+            <p id="faltam">0</p>
+         </div>
+
+        <div class="card">
+            <h3>💰 Total</h3>
+            <p id="valorTotal">R$ 0,00</p>
+        </div>
+
+    </div>
+
+        <div class="entrada">
+
+    <input
+        type="text"
+        id="itens"
+        placeholder="O que precisa?">
+
+    <select id="categoria">
+        <option>Sala</option>
+        <option>Quarto</option>
+        <option>Cozinha</option>
+        <option>Banheiro</option>
+        <option>Lavanderia</option>
+        <option>Área Externa</option>
+        <option>Outros</option>
+    </select>
+
+    <input
+        type="number"
+        id="preco"
+        placeholder="Preço">
+
+    <select id="prioridade">
+        <option>Alta 🔴</option>
+        <option>Média 🟡</option>
+        <option>Baixa 🟢</option>
+    </select>
+
+    <button id="btnAdicionar">
+        Adicionar
+    </button>
+
+</div>
+        
+    <p id="contador">
+        0 itens
+    </p>    
+
+    <h3 id="total">
+        Total: R$ 0,00
+    </h3>   
+    
+    <input
+        type="text"
+        id="pesquisa"
+        placeholder="🔍 Pesquisar item...">
+        
+    <ul id="lista"></ul>
+
+    </div>
+
+    <div id="modalEditar" class="modal">
+
+    <div class="modalConteudo">
+
+        <h2>✏️ Editar Item</h2>
+
+        <input type="text" id="editarNome">
+
+        <input type="number" id="editarPreco">
+
+        <select id="editarCategoria">
+            <option>Sala</option>
+            <option>Quarto</option>
+            <option>Cozinha</option>
+            <option>Banheiro</option>
+            <option>Lavanderia</option>
+            <option>Área Externa</option>
+            <option>Outros</option>
+        </select>
+
+        <select id="editarPrioridade">
+            <option>Alta 🔴</option>
+            <option>Média 🟡</option>
+            <option>Baixa 🟢</option>
+        </select>
+
+        <div class="botoesModal">
+
+            <button id="cancelarEdicao">
+                Cancelar
+            </button>
+
+            <button id="salvarEdicao">
+                Salvar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    
+    <script src="script.js"></script>
+
+</body>
+
+</html>
