@@ -21,6 +21,40 @@ const editarCategoria = document.getElementById("editarCategoria");
 const editarPrioridade = document.getElementById("editarPrioridade");
 const salvarEdicao = document.getElementById("salvarEdicao");
 const cancelarEdicao = document.getElementById("cancelarEdicao");
+const btnLimpar = document.getElementById("btnLimpar");
+const btnComprados = document.getElementById("btnComprados");
+const btnFaltam = document.getElementById("btnFaltam");
+const btnTodos = document.getElementById("btnTodos");
+
+btnTodos.addEventListener("click", function(){
+
+    renderizarLista();
+
+});
+
+btnFaltam.addEventListener("click", function(){
+
+    const faltam = itens.filter(function(item){
+
+        return !item.concluida;
+
+    });
+
+    renderizarLista(faltam);
+
+});
+
+btnComprados.addEventListener("click", function(){
+
+    const comprados = itens.filter(function(item){
+
+        return item.concluida;
+
+    });
+
+    renderizarLista(comprados);
+
+});
 
 let itens = [];
 
@@ -84,6 +118,32 @@ function renderizarLista(listaExibida = itens) {
 
     lista.innerHTML = "";
 
+    listaExibida = [...listaExibida];
+
+    listaExibida.sort(function(a, b){
+
+    const prioridades = {
+        "Alta": 3,
+        "Média": 2,
+        "Baixa": 1
+    };
+
+    return prioridades[b.prioridade] - prioridades[a.prioridade];
+
+});
+
+    if(listaExibida.length === 0){
+
+    lista.innerHTML = `
+        <li style="justify-content:center;">
+            Nenhum item encontrado.
+        </li>
+    `;
+
+    return;
+
+}
+
     listaExibida.forEach(function (item) {
 
         let li = document.createElement("li");
@@ -94,10 +154,17 @@ function renderizarLista(listaExibida = itens) {
 
         li.innerHTML = `
             <div>
+
                 <strong>${item.texto}</strong><br>
+
                 📂 ${item.categoria}<br>
+
                 💰 R$ ${item.preco.toFixed(2)}<br>
-                ⭐ ${item.prioridade}
+
+                ⭐ ${item.prioridade}<br>
+
+                📅 ${item.data}
+
             </div>
         `;
 
@@ -121,6 +188,8 @@ function renderizarLista(listaExibida = itens) {
 
         });
 
+
+
         let botaoExcluir = document.createElement("button");
         botaoExcluir.textContent = "🗑️";
         botaoExcluir.classList.add("btnExcluir");
@@ -129,7 +198,15 @@ function renderizarLista(listaExibida = itens) {
 
             event.stopPropagation();
 
-            const indiceOriginal = itens.indexOf(item);
+            if(!confirm("Deseja realmente excluir este item?")){
+                return;
+            }
+
+            const indiceOriginal = itens.findIndex(function(i){
+
+                return i.id === item.id;
+
+            });
 
             if(indiceOriginal !== -1){
                 itens.splice(indiceOriginal,1);
@@ -167,11 +244,15 @@ function renderizarLista(listaExibida = itens) {
 
     });
 
-}
+    }
 
 cancelarEdicao.addEventListener("click", function () {
 
+    itemEditando = null;
+
     modalEditar.classList.remove("ativo");
+
+    input.focus();
 
 });
 
@@ -209,36 +290,65 @@ salvarEdicao.addEventListener("click", function () {
 
     modalEditar.classList.remove("ativo");
 
+    input.focus();
+
 });
 
 botao.addEventListener("click", adicionarItem);
 
+input.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+        adicionarItem();
+    }
+
+});
+
 function adicionarItem() {
 
-    const texto = input.value.trim();
+    const texto = input.value
+    .trim()
+    .replace(/\s+/g," ");
 
     if (texto === "") {
         alert("O que precisa?");
         return;
     }
 
-    if (preco.value === "" || Number(preco.value) <= 0) {
-        alert("Digite um preço válido.");
+    const existe = itens.some(function(item){
+
+        return item.texto.toLowerCase() === texto.toLowerCase();
+
+    });
+
+    if(existe){
+        alert("Este item já está na lista.");
         return;
     }
 
+        if(preco.value === "" || Number(preco.value) <= 0){
+
+        alert("Digite um preço válido.");
+        return;
+        }
+    
+
     itens.push({
+        id: Date.now(),
         texto: texto,
         categoria: categoria.value,
         preco: Number(preco.value),
         prioridade: prioridade.value,
-        concluida: false
+        concluida: false,
+        data: new Date().toLocaleDateString("pt-BR")
     });
 
     input.value = "";
     preco.value = "";
     categoria.selectedIndex = 0;
     prioridade.selectedIndex = 0;
+
+    input.focus();
 
     renderizarLista();
     atualizarTotal();
@@ -260,6 +370,18 @@ function carregarItens() {
     if (dados) {
         itens = JSON.parse(dados);
 
+        itens.forEach(function(item){    
+
+            if(!item.data){
+
+                item.data = new Date().toLocaleDateString("pt-BR");
+
+            }
+
+        });
+
+        salvarItens();
+
     }
 
     renderizarLista();
@@ -274,11 +396,23 @@ carregarItens();
 
 pesquisa.addEventListener("input", function () {
 
-    const textoPesquisa = pesquisa.value.toLowerCase();
+    const textoPesquisa = pesquisa.value
+    .trim()
+    .toLowerCase();
 
     const itensFiltrados = itens.filter(function (item) {
 
-        return item.texto.toLowerCase().includes(textoPesquisa);
+        return (
+
+            item.texto.toLowerCase().includes(textoPesquisa) ||
+
+            item.categoria.toLowerCase().includes(textoPesquisa) ||
+
+            item.prioridade.toLowerCase().includes(textoPesquisa) ||
+
+            item.data.includes(textoPesquisa)
+
+        );
 
     });
 
@@ -311,4 +445,27 @@ if (temaSalvo === "dark") {
     document.body.classList.add("dark");
     btnTema.textContent = "☀️ Modo Claro";
 
+} else {
+
+    btnTema.textContent = "🌙  Modo Escuro";
+
 }
+
+btnLimpar.addEventListener("click", function(){
+
+    if(confirm("Deseja apagar todos os itens?")){
+
+        itens = [];
+
+        salvarItens();
+
+        renderizarLista();
+        atualizarTotal();
+        atualizarDashboard();
+        atualizarProgresso();
+
+        contador.textContent = "0 itens";
+
+    }
+
+});
