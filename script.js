@@ -60,6 +60,15 @@ let itens = [];
 
 let itemEditando = null;
 
+function formatarMoeda(valor){
+
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+
+}
+
 function atualizarTotal() {
 
     let soma = 0;
@@ -68,7 +77,7 @@ function atualizarTotal() {
         soma += item.preco;
     });
 
-    total.textContent = `Total: R$ ${soma.toFixed(2)}`;
+    total.textContent = `Total: ${formatarMoeda(soma)}`;
 }
 
 function atualizarDashboard() {
@@ -89,7 +98,7 @@ function atualizarDashboard() {
         soma += item.preco;
     });
 
-    valorTotal.textContent = `R$ ${soma.toFixed(2)}`;
+    valorTotal.textContent = formatarMoeda(soma);
 
 }
 
@@ -123,10 +132,10 @@ function renderizarLista(listaExibida = itens) {
     listaExibida.sort(function(a, b){
 
     const prioridades = {
-        "Alta": 3,
-        "Média": 2,
-        "Baixa": 1
-    };
+    "Alta 🔴": 3,
+    "Média 🟡": 2,
+    "Baixa 🟢": 1
+};
 
     return prioridades[b.prioridade] - prioridades[a.prioridade];
 
@@ -159,7 +168,7 @@ function renderizarLista(listaExibida = itens) {
 
                 📂 ${item.categoria}<br>
 
-                💰 R$ ${item.preco.toFixed(2)}<br>
+                💰 ${formatarMoeda(item.preco)}<br>
 
                 ⭐ ${item.prioridade}<br>
 
